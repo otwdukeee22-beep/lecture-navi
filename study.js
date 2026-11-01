@@ -125,17 +125,25 @@ function pageOf(s,t){
 }
 async function slideText(t){
   const lec=t.lec;
-  if(lec.st&&lec.st.length===lec.np)return;
+  if(lec.st&&lec.st.length===lec.np&&lec.stt&&lec.stt.length===lec.np)return;
   for(let i=0;i<200&&!t.doc;i++){await new Promise(r=>setTimeout(r,200));if(active!==t)return}
   if(!t.doc)return;
-  const out=[];
+  const out=[],tit=[];
   for(let i=1;i<=t.doc.numPages;i++){
-    try{const pg=await t.doc.getPage(i);const tc=await pg.getTextContent();out.push(tc.items.map(o=>o.str).join(' ').replace(/\s+/g,' ').trim().slice(0,4000));pg.cleanup()}catch(e){out.push('')}
+    try{
+      const pg=await t.doc.getPage(i),tc=await pg.getTextContent(),H=pg.getViewport({scale:1}).height;
+      out.push(tc.items.map(o=>o.str).join(' ').replace(/\s+/g,' ').trim().slice(0,4000));
+      /* 쪽 제목: 위쪽 30% 안에서 가장 큰 글자 */
+      const top=tc.items.filter(o=>/[A-Za-z가-힣]{3,}/.test(o.str)&&o.transform&&o.transform[5]>H*.7);   // 수식 조각(C, dC …)은 빼고 글자만
+      const mh=Math.max(0,...top.map(o=>Math.abs(o.transform[3])));
+      tit.push(mh?top.filter(o=>Math.abs(o.transform[3])>=mh*.85).sort((a,b)=>b.transform[5]-a.transform[5]||a.transform[4]-b.transform[4]).map(o=>o.str).join(' ').replace(/\s+/g,' ').replace(/\s+([-–])\s+/g,'$1').trim().slice(0,40):'');
+      pg.cleanup();
+    }catch(e){out.push('');tit.push('')}
     if(active!==t)return;
   }
-  lec.st=out;saveLec();dirty();
+  lec.st=out;lec.stt=tit;saveLec();dirty();
 }
-const slideTitle=p=>{const s=active.lec.st&&active.lec.st[p-1];return s?s.slice(0,40):''};
+const slideTitle=p=>{const L=active.lec,t=L.stt&&L.stt[p-1];if(t)return t;const s=L.st&&L.st[p-1];return s?s.slice(0,40):''};
 
 /* ======================================================================
    ⑤ 중요 별 표시 = 말(강조 표현) + 반복
