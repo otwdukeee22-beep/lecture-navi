@@ -5,15 +5,15 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="렉처 내비">
+<meta name="apple-mobile-web-app-title" content="캐치노트">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="theme-color" content="#f3f4f7">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" href="icon-192.png">
-<title>렉처 내비</title>
+<title>캐치노트</title>
 <style>
-/* 렉처 내비 v0.1 — PDF 에 필기하면서 녹음하고, 필기를 누르면 그 순간 녹음을 들려준다.
+/* 캐치노트 (옛 이름 캐치노트) — PDF 에 필기하면서 녹음하고, 필기를 누르면 그 순간 녹음을 들려준다.
    PDF 뷰어·필기·손바닥 걸러내기는 _scripts/hub/template.html (강의자료 바로가기) 에서 가져왔다.
    그쪽에서 고친 버그(CLAUDE.md 1-3, 1-4)는 여기에도 그대로 들어 있다. */
 :root{--bg:#f3f4f7;--card:#ffffff;--ink:#16181d;--mute:#667085;--line:#e3e6ec;--acc:#1a5fb4;--rec:#d92d20;--ok:#1a7a3c;--note:#fff6e0;--noteink:#6b4e00;--vbg:#d9dce2;
@@ -214,7 +214,7 @@ body.recording .vtop{box-shadow:inset 0 3px 0 var(--rec)}
 <body>
 <div id="home">
 <header><div class="wrap">
-<h1>렉처 내비</h1>
+<h1>캐치노트</h1>
 <p class="sub">PDF에 필기하면서 녹음하고, 나중에 필기를 누르면 그 순간의 녹음이 나와요.</p>
 <label class="addbtn"><input type="file" id="fin" accept="application/pdf,.pdf" hidden>+ PDF 열기</label>
 </div></header>
@@ -360,7 +360,7 @@ async function openLec(lec){
   lec.ink=lec.ink||{};lec.segs=lec.segs||[];lec.pl=lec.pl||[];lec.opened=Date.now();saveLecNow(lec);
   const v=lec.view||{};
   const t={lec,ink:lec.ink,zoom:(v.zoom>=ZMIN&&v.zoom<=ZMAX)?v.zoom:1,y:+v.y||0,x:+v.x||0,doc:null,sizes:null,io:null,gen:0,laidW:0,tops:[],undo:[]};
-  active=t;HOME.hidden=true;V.hidden=false;document.title=lec.name+' · 렉처 내비';
+  active=t;HOME.hidden=true;V.hidden=false;document.title=lec.name+' · 캐치노트';
   PIN.innerHTML='';PMSG.textContent='';AUD.seg=null;
   inkSync();controls();recSync();playerSync();
   await loadAudio(lec);if(active!==t)return;
@@ -376,7 +376,7 @@ function closeLec(){
   t.gen++;if(t.io){t.io.disconnect();t.io=null}
   PAGES.querySelectorAll('.pgw').forEach(freePage);PIN.innerHTML='';
   if(t.doc){try{t.doc.destroy()}catch(e){}}
-  hook('close');active=null;V.hidden=true;HOME.hidden=false;document.title='렉처 내비';
+  hook('close');active=null;V.hidden=true;HOME.hidden=false;document.title='캐치노트';
   IBAR.hidden=IFAB.hidden=ICUR.hidden=true;renderHome();
 }
 $('vclose').onclick=closeLec;
@@ -583,7 +583,7 @@ document.addEventListener('keydown',e=>{if(V.hidden)return;
 /* ---- 필기 ----
    (강의자료 바로가기에서 가져옴) 획은 좌표 배열로 들고 있다가 쪽을 그릴 때마다 다시 그린다.
    좌표는 가로·세로 모두 '쪽 너비 = 1' 비율.
-   렉처 내비에서 더한 것: 녹음 중에 그은 획에는 s(녹음 id) 와 t(녹음 시작부터 몇 ms) 가 붙는다.
+   캐치노트에서 더한 것: 녹음 중에 그은 획에는 s(녹음 id) 와 t(녹음 시작부터 몇 ms) 가 붙는다.
    보기 모드에서 그 획을 누르면 그 시각의 녹음을 들려준다. */
 const ICOL=[['검정','#111111'],['빨강','#e01b24'],['파랑','#1a5fb4'],['초록','#1a7a3c']];
 const IRANGE={pen:[1,24],era:[6,80]},ICFG='lnInkCfg';

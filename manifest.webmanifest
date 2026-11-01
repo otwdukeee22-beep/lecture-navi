@@ -1,6 +1,6 @@
 {
-  "name": "렉처 내비",
-  "short_name": "렉처 내비",
+  "name": "캐치노트",
+  "short_name": "캐치노트",
   "description": "PDF에 필기하면서 녹음하고, 필기를 누르면 그 순간의 녹음을 들려주는 강의 노트",
   "start_url": "./",
   "scope": "./",
