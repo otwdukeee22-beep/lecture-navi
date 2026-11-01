@@ -82,7 +82,7 @@ body.recording .vtop{box-shadow:inset 0 3px 0 var(--rec)}
 .pb{flex:none;border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:8px;min-width:36px;height:34px;padding:0 8px;font:600 14px var(--f-body);cursor:pointer;font-variant-numeric:tabular-nums}
 .pb.play{min-width:44px;background:var(--acc);border-color:var(--acc);color:#fff}
 .pb:focus-visible{outline:2px solid var(--acc);outline-offset:1px}
-@media (max-width:430px){.pbar{flex-wrap:wrap}.pbar input[type=range]{order:9;flex-basis:100%}.pbar .pt{flex:1}}
+@media (max-width:430px){.pbar{flex-wrap:wrap}.pbar input[type=range]{order:9;flex-basis:100%}.pbar .pt{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis}#pback,#pfwd{display:none}}
 .toast{position:absolute;z-index:6;left:50%;top:14px;transform:translateX(-50%);max-width:calc(100% - 32px);padding:8px 14px;border-radius:999px;background:var(--ink);color:var(--bg);font:600 13px var(--f-body);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;pointer-events:none;box-shadow:0 2px 8px rgba(0,0,0,.25)}
 .toast.long{white-space:normal;border-radius:12px;text-align:center;line-height:1.45}
 #stage{flex:1;position:relative;min-height:0}
@@ -130,6 +130,66 @@ body.recording .vtop{box-shadow:inset 0 3px 0 var(--rec)}
 #inkfab.act{border-width:3px;border-color:var(--c)}
 #inkcur{position:fixed;z-index:6;border:1.5px dashed var(--mute);background:rgba(127,127,127,.12);border-radius:50%;pointer-events:none;transform:translate(-50%,-50%)}
 .ibm:focus-visible,.ibb:focus-visible,.isw:focus-visible,#inkfab:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+/* ---- 실시간 자막 ---- */
+.cap{position:absolute;z-index:5;left:50%;transform:translateX(-50%);top:8px;width:min(720px,calc(100% - 24px));max-height:9.5em;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;padding:8px 12px;border-radius:12px;background:rgba(10,12,16,.78);color:#fff;font:15px/1.45 var(--f-body);pointer-events:none}
+.cap.top2{top:120px}
+.cap .cl+.cl{margin-top:4px}
+.cap .ci{opacity:.7}
+.cap .ck{color:#ffd98a;font-size:14px}
+/* ---- 공부 창 (넓은 화면은 오른쪽, 폰은 아래) ---- */
+.sp{position:absolute;z-index:5;top:0;right:0;bottom:0;width:min(380px,42%);background:var(--card);border-left:1px solid var(--line);display:flex;flex-direction:column}
+#stage.spopen .pages{right:min(380px,42%)}
+#stage.spopen #inkbar{right:min(380px,42%)}
+#stage.spopen #inkfab{right:calc(min(380px,42%) + 12px)}
+#stage.spopen .cap{left:calc((100% - min(380px,42%))/2);width:min(620px,calc(100% - min(380px,42%) - 24px))}
+@media (max-width:700px){
+  .sp{top:auto;left:0;width:auto;height:52%;border-left:0;border-top:1px solid var(--line);border-radius:14px 14px 0 0;box-shadow:0 -3px 14px rgba(0,0,0,.18)}
+  #stage.spopen .pages{right:0;bottom:52%}#stage.spopen #inkbar{right:0;bottom:52%}#stage.spopen #inkfab{right:12px;bottom:calc(52% + 12px)}
+  #stage.spopen .cap{left:50%;width:calc(100% - 24px)}
+}
+.sphd{display:flex;align-items:center;gap:6px;padding:8px 8px 6px 10px;border-bottom:1px solid var(--line)}
+#sptabs{flex:1;min-width:0;display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
+#sptabs::-webkit-scrollbar{display:none}
+#sptabs button{flex:none;border:0;background:none;color:var(--mute);font:700 14px var(--f-body);padding:7px 9px;border-radius:8px;cursor:pointer}
+#sptabs button.on{background:var(--ink);color:var(--bg)}
+#spb{flex:1;overflow:auto;padding:4px 12px calc(env(safe-area-inset-bottom,0px) + 18px);-webkit-overflow-scrolling:touch}
+.spn{font-size:12.5px;color:var(--mute);line-height:1.55;margin:10px 0 6px}
+.sph{font-size:14px;margin:18px 0 4px}
+.spbar{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0 4px}
+.spbar .seg{border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:999px;padding:6px 12px;font:600 13px var(--f-body);cursor:pointer}
+.spbar .seg.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.spact{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
+.spact a.vb{display:inline-flex;align-items:center;text-decoration:none}
+.vb.ok{background:var(--acc);border-color:var(--acc);color:#fff}
+.vb.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.ln{border-top:1px solid var(--line);padding:9px 2px;cursor:pointer}
+.ln.s1{background:linear-gradient(90deg,rgba(255,196,0,.10),transparent 60%)}
+.ln.s2{background:linear-gradient(90deg,rgba(255,196,0,.20),transparent 70%)}
+.ln.s3{background:linear-gradient(90deg,rgba(255,170,0,.32),transparent 80%)}
+.ln.now{outline:2px solid var(--acc);outline-offset:-2px;border-radius:8px}
+.lt{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.lx{font-size:14.5px;line-height:1.5;margin-top:5px}
+.lk{font-size:13.5px;line-height:1.5;color:var(--mute);margin-top:3px}
+.chip{border:1px solid var(--line);background:var(--bg);color:var(--acc);border-radius:999px;padding:3px 9px;font:600 12px var(--f-body);font-variant-numeric:tabular-nums;cursor:pointer;white-space:nowrap}
+.starb{border:0;background:none;color:#e0a800;font:700 15px var(--f-body);cursor:pointer;padding:2px 4px}
+.tag{font-size:11px;color:var(--mute);border:1px solid var(--line);border-radius:6px;padding:1px 6px}
+.sumbox{margin-top:8px}
+.sumh{font-weight:700;font-size:14px;margin:14px 0 4px}
+.sumr{font-size:14px;line-height:1.6;margin:3px 0}
+.sumr .sst{color:#e0a800;font-weight:700}
+.askf{display:flex;flex-direction:column;gap:6px;margin-top:10px}
+.askf textarea,.askf input,#spb textarea{width:100%;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);font:15px/1.5 var(--f-body);padding:8px 10px}
+.askf .vb{align-self:flex-end}
+.qcard{border:1px solid var(--line);border-radius:12px;padding:12px;margin-top:10px}
+.qh{font-size:12px;color:var(--mute);font-weight:700}
+.qq{font-size:15.5px;line-height:1.6;margin:8px 0}
+.qc{font-size:14.5px;line-height:1.5;margin:4px 0}
+.qa{font-size:15px;margin:10px 0 4px}
+.qw,.qref{font-size:13.5px;color:var(--mute);margin:4px 0}
+.aib,.qw{font-size:14px;line-height:1.6}
+.aih{font-weight:700;margin-top:10px}
+.ail .chip,.aih .chip{margin:0 2px}
+@media (max-width:480px){.rhint{display:none}}
 /* ---- 녹음 기록 창 ---- */
 .sheet{position:fixed;inset:0;z-index:20;background:rgba(0,0,0,.4);display:flex;align-items:flex-end;justify-content:center}
 .shp{width:100%;max-width:640px;max-height:82vh;display:flex;flex-direction:column;background:var(--card);border-radius:16px 16px 0 0;padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -168,10 +228,12 @@ body.recording .vtop{box-shadow:inset 0 3px 0 var(--rec)}
 <div id="viewer" hidden>
 <div class="vtop">
 <div class="vbar"><button class="vb" id="vclose" type="button" aria-label="목록으로">‹ 목록</button><button class="vt" id="vpage" type="button" aria-label="쪽 번호로 이동" title="눌러서 쪽 번호로 이동"></button><form class="vjump" id="vjump" hidden><input id="vnum" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off" aria-label="이동할 쪽 번호"><span class="vtot" id="vtot"></span><button class="vb" type="submit">이동</button><button class="vb" id="vjx" type="button" aria-label="취소">×</button></form><span class="vzoom" id="vzoom"><button class="vb" id="vout" type="button" aria-label="축소">−</button><span class="vinfo" id="vinfo"></span><button class="vb" id="vin" type="button" aria-label="확대">+</button></span></div>
-<div class="rbar"><button class="recb" id="recb" type="button"><span class="dot"></span><span id="recl">녹음</span></button><span class="rtime" id="rtime" hidden></span><span class="meter" id="meter" hidden><i id="lvl"></i></span><span class="rhint" id="rhint"></span><button class="vb" id="logb" type="button">녹음 목록</button></div>
+<div class="rbar"><button class="recb" id="recb" type="button"><span class="dot"></span><span id="recl">녹음</span></button><span class="rtime" id="rtime" hidden></span><span class="meter" id="meter" hidden><i id="lvl"></i></span><span class="rhint" id="rhint"></span><button class="vb" id="capb" type="button" aria-label="실시간 자막">자막</button><button class="vb" id="studyb" type="button">공부</button><button class="vb" id="logb" type="button">녹음 목록</button></div>
 <div class="pbar" id="pbar" hidden><button class="pb play" id="pplay" type="button" aria-label="재생">▶</button><button class="pb" id="pback" type="button" aria-label="10초 뒤로">−10</button><input type="range" id="pseek" min="0" max="1" step="0.1" value="0" aria-label="재생 위치"><button class="pb" id="pfwd" type="button" aria-label="10초 앞으로">+10</button><span class="pt" id="ptime"></span><button class="pb" id="pvol" type="button" aria-label="재생 소리 크기">🔊×2</button><button class="pb" id="px" type="button" aria-label="재생 닫기">×</button></div>
 </div>
 <div id="stage"><div id="toast" class="toast" hidden></div>
+<div id="cap" class="cap" hidden aria-live="polite"></div>
+<aside class="sp" id="sp" hidden aria-label="공부"><div class="sphd"><div id="sptabs" role="tablist"><button type="button" data-t="tr">전사문</button><button type="button" data-t="sum">요약</button><button type="button" data-t="quiz">문제</button><button type="button" data-t="ask">질문</button><button type="button" data-t="set">설정</button></div><button class="vb" id="spx" type="button" aria-label="공부 창 닫기">×</button></div><div id="spb"></div></aside>
 <div class="pages" id="pages" tabindex="-1"><div id="pin"></div></div><div class="pmsg" id="pmsg"></div>
 <div id="inkbar" hidden><div class="inkp">
 <button class="ibm on" type="button" data-m="view">보기</button><button class="ibm" type="button" data-m="pen">펜</button><button class="ibm" type="button" data-m="era">지우개</button>
@@ -198,6 +260,8 @@ function b64(s){const b=atob(s),u=new Uint8Array(b.length);for(let i=0;i<b.lengt
 class CMF{async fetch({name}){const s=PDFDATA.cmaps[name];if(!s)throw new Error('cmap '+name);return{cMapData:b64(s),compressionType:1}}}
 class SFF{async fetch({filename}){const s=PDFDATA.fonts[filename];if(!s)throw new Error('font '+filename);return b64(s)}}
 const $=id=>document.getElementById(id);
+/* study.js 의 on_이름() 을 부른다 (없으면 조용히 넘어간다) */
+const hook=(n,...a)=>{const f=window['on_'+n];if(typeof f==='function')try{f(...a)}catch(e){console.error(e)}};
 
 /* ---- 저장소 (IndexedDB) ----
    lec   : 강의 하나 = { id, name, size, np, ink:{쪽:[획]}, segs:[녹음], pl:[[녹음id, ms, 쪽]], view }
@@ -302,7 +366,7 @@ async function openLec(lec){
   await loadAudio(lec);if(active!==t)return;
   recSync();playerSync();
   if(!(await load(t))||active!==t)return;
-  layout(t);restoreScroll(t);controls();
+  layout(t);restoreScroll(t);controls();hook('open',t);
 }
 function closeLec(){
   if(REC.on){toast('녹음 중이에요. ■ 정지를 누른 뒤에 목록으로 갈 수 있어요',2600);return}
@@ -312,7 +376,7 @@ function closeLec(){
   t.gen++;if(t.io){t.io.disconnect();t.io=null}
   PAGES.querySelectorAll('.pgw').forEach(freePage);PIN.innerHTML='';
   if(t.doc){try{t.doc.destroy()}catch(e){}}
-  active=null;V.hidden=true;HOME.hidden=false;document.title='렉처 내비';
+  hook('close');active=null;V.hidden=true;HOME.hidden=false;document.title='렉처 내비';
   IBAR.hidden=IFAB.hidden=ICUR.hidden=true;renderHome();
 }
 $('vclose').onclick=closeLec;
@@ -395,7 +459,7 @@ function showPage(t){
   const n=curPage(t);
   PAGE.textContent=n?n+' / '+t.sizes.length+' 쪽':'';PAGE.disabled=!n;
   if(!VJUMP.hidden)VTOT.textContent='/ '+t.sizes.length+' 쪽';
-  inkBtns();logPage();
+  inkBtns();logPage();hook('page',n);
 }
 function controls(){
   const t=active;INFO.textContent=t?Math.round(t.zoom*100)+'%':'';
@@ -637,6 +701,7 @@ function startPan(t,min){
 }
 function onInkDown(e){
   const t=active;if(V.hidden||!t||!SHEET.hidden)return;
+  if(e.target&&e.target.closest&&e.target.closest('.sp'))return;
   const pen=e.pointerType==='pen';
   if(pen)STYLUS=performance.now();
   if(e.pointerType==='touch'){
@@ -758,6 +823,7 @@ function inkSync(){
   IFAB.classList.toggle('act',drawing);IFAB.style.setProperty('--c',c);
   if(INK.mode!=='era')ICUR.hidden=true;
   inkBtns();rhint();
+  if(typeof capSync==='function')capSync();
   try{localStorage.setItem(ICFG,JSON.stringify({m:INK.mode,c:INK.col,p:INK.pen,e:INK.era,x:INK.era2,o:INK.open,q:INK.pos}))}catch(e){}
 }
 ICOL.forEach(([nm,c],i)=>{
@@ -872,7 +938,7 @@ function segBegin(st){
     tr.onended=()=>{seg.ev.push([Date.now()-seg.start,'ended']);recover('ended')};
   }
   mr.start(1000);
-  logPage(true);saveLec();sheetRender();
+  logPage(true);saveLec();sheetRender();hook('segStart',seg);
 }
 async function segEnd(lec,seg,parts){
   if(seg.closed)return;seg.closed=true;
@@ -894,7 +960,7 @@ function recStop(){
   try{if(mr&&mr.state!=='inactive')mr.stop()}catch(e){}
   stopTracks(REC.stream);REC.stream=null;REC.mr=null;REC.seg=null;
   if(REC.ac){try{REC.ac.close()}catch(e){}}REC.ac=null;REC.an=null;REC.src=null;
-  clearInterval(REC.iv);wakeOff();recSync();sheetRender();
+  clearInterval(REC.iv);wakeOff();recSync();sheetRender();hook('recStop');
   toast('녹음을 저장했어요. 보기 모드에서 필기를 누르면 그때 녹음이 나와요',3200);
 }
 /* 마이크가 끊겼을 때: 지금 녹음을 닫고 새 녹음으로 이어 간다. 화면이 안 보일 때는 돌아온 뒤에 한다 */
@@ -902,7 +968,7 @@ let recovering=false;
 async function recover(why){
   if(!REC.on||recovering)return;
   if(document.hidden){REC.needRecover=why||'hidden';return}
-  recovering=true;
+  recovering=true;hook('recover',why);
   const old=REC.mr,seg=REC.seg;
   if(seg&&!seg.end)seg.end=Date.now();
   try{if(old&&old.state!=='inactive')old.stop()}catch(e){}
@@ -958,8 +1024,9 @@ document.addEventListener('visibilitychange',()=>{
   if(document.hidden){
     if(REC.on&&REC.seg){REC.hidAt=Date.now();REC.hidBytes=REC.seg.bytes;REC.hidSeg=REC.seg;REC.mutedAt=0;try{REC.mr.requestData()}catch(e){}}
     if(active){saveScroll(active);active.lec.view={zoom:active.zoom,y:+active.y.toFixed(4),x:+active.x.toFixed(4)};saveLecNow(active.lec)}
-    return;
+    hook('hidden');return;
   }
+  hook('visible');
   if(!REC.on||!REC.hidAt)return;
   const at=REC.hidAt,seg=REC.hidSeg,b0=REC.hidBytes,len=Date.now()-at;
   REC.hidAt=0;wakeOn();
@@ -1055,7 +1122,7 @@ AU.addEventListener('durationchange',()=>{
   }
   playerSync()});
 let lastPaint=0;
-AU.addEventListener('timeupdate',()=>{playerSync();const n=performance.now();if(n-lastPaint>240){lastPaint=n;repaintAll()}});
+AU.addEventListener('timeupdate',()=>{playerSync();hook('time');const n=performance.now();if(n-lastPaint>240){lastPaint=n;repaintAll()}});
 ['play','pause','ended','seeked'].forEach(ev=>AU.addEventListener(ev,()=>{playerSync();repaintAll()}));
 function durOf(seg){return isFinite(AU.duration)&&AU.duration>0&&!AUD.fixing?AU.duration:(seg?seg.dur/1000:0)}
 function playerSync(){
@@ -1154,6 +1221,7 @@ function sheetRender(){
       const a=document.createElement('div');a.className='sga';
       a.append(btn('▶ 처음부터',()=>{closeSheet();playAt(s,0)}),
                btn('파일로 저장·공유',()=>exportSeg(lec,s)));
+      if(typeof importDialog==='function')a.appendChild(btn('전사문 넣기',()=>importDialog(s)));
       box.appendChild(a);
     }
     for(const g of s.gaps||[]){
@@ -1175,5 +1243,6 @@ function sheetRender(){
   renderHome();inkSync();
 })();
 </script>
+<script src="study.js"></script>
 </body>
 </html>
